@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,8 +22,7 @@ model-viewer
 </style>
 <body>
   <img src= "" class="qr-code img-thumbnail img-responsive" />
-<model-viewer id="dimension-demo" ar src="no_shield2.glb">
-  
+<model-viewer id="dimension-demo" ar src="no_shield2.glb" alt="A 3D model of an armchair.">
 </model-viewer>
 <button type="button" class=
 			"btn btn-default" id="generate">
@@ -35,7 +35,60 @@ model-viewer
 
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script type="module">
+  var x2;
+  var y2;
+  //var check = "11.glb";
+  const modelViewerVariants = document.querySelector("model-viewer#dimension-demo");
+        const select = document.querySelector('#variant');
+        modelViewerVariants.addEventListener('load', () => {
+
+          const names = modelViewerVariants.availableVariants; // call to get all the variants stored inside glb file.
+          $("#variant").empty();
+          for (const name of names) // creates a list (dropdown) with options, stored in glb. 
+          {
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            
+            select.appendChild(option);
           
+          }
+          
+          
+
+        });
+        
+      
+        // actually changes color of the frame.
+        select.addEventListener('input', (event) => {
+          
+          modelViewerVariants.variantName = event.target.value === 'default' ? null : event.target.value;
+        
+        
+          //console.log(modelViewerVariants.variantName);
+        });
+  
+function ht_wd(ht,wd) // Takes 2 parameters, height(ht) and width(wd), both in inches.
+{
+  const modelViewer = document.querySelector('#dimension-demo');
+  //modelViewer.src = event.target.value;
+    const size = modelViewer.getDimensions(); // returns the dimension of glb, in meters. 
+    console.log(size);
+     x2 = size.x ; // saves width (x-axis) of glb model.
+      y2 = size.y ;// saves height (y-axis) of glb model.
+      modelViewer.scale = `${1.2*wd/(x2*39.3701)} ${1.2*ht/(y2*39.3701)} ${1}`;  
+      // simple unitary method to set new dimensions. we convert x2 and y2 to inches. Scaling means multipling with original dimensions, which are x2 and y2 repectively.
+      // hence dividing by those original dimensions and multiply with new will result in accurate dimensions.
+
+}
+const modelViewer = document.querySelector('#dimension-demo');
+
+// funtion to implement changes in src. this is purely for testing, as mentioned in html.
+modelViewer.querySelector('#src').addEventListener('input', (event) => {
+         modelViewer.src = event.target.value;  // change the src of the model viewer.
+ 
+
+       });
 
   function htmlEncode(value) {
 	return $('<div/>').text(value)
@@ -76,7 +129,7 @@ model-viewer
       mv.activateAR();
     }
 </script>
-<!-- <style> 
+<style> 
 .button {
        top:11%;
        left:55%;
@@ -85,7 +138,19 @@ model-viewer
        position: absolute;
     
 }
-
+/*  model-viewer::part(default-ar-button)
+  {
+  background-color: red;
+ } */
+  #controls {
+    position: absolute;
+    bottom: 140px;
+    left: 16px;
+    max-width: unset;
+    transform: unset;
+    pointer-events: auto;
+    z-index: 100;
+  }
 
   .dot{
     display: none;
@@ -143,7 +208,7 @@ model-viewer
   left: 50%; /* Adjust the horizontal position */
   transform: translate(-50%, -50%); /* Center the image */
   border: 1px solid #ccc; /* Optional: Add a border for visual clarity */
-} -->
-<!-- </style> -->
+}
+</style>
 </body>
 </html>
